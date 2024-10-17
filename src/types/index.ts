@@ -17,7 +17,7 @@ export interface IOrder {
 	phone: string;
 	address: string;
 	total: number;
-	items: string[];
+	items: { id: string; quantity: number }[];
 }
 
 // Интерфейс для базового класса Modal
