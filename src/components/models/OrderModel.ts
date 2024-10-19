@@ -7,7 +7,7 @@ export class OrderModel {
 	private phone: string;
 	private address: string;
 	private total: number;
-	private items: string[];
+	private items: { id: string; quantity: number }[];
 	private events: EventEmitter;
 
 	constructor(order: IOrder, events: EventEmitter) {
@@ -55,10 +55,10 @@ export class OrderModel {
 
 	public calculateTotal(products: { id: string; price: number }[]): void {
 		let sum = 0;
-		this.items.forEach((itemId) => {
-			const product = products.find((p) => p.id === itemId);
+		this.items.forEach(({ id, quantity }) => {
+			const product = products.find((p) => p.id === id);
 			if (product) {
-				sum += product.price;
+				sum += product.price * quantity;
 			}
 		});
 		this.total = sum;

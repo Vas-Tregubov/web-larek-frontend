@@ -2,6 +2,7 @@ import { Modal } from '../base/Modal';
 import { EventEmitter } from '../base/events';
 import { IOrder } from '../../types';
 import { ProductModel } from '../models/ProductModel';
+import { OrderModel } from '../models/OrderModel';
 import { IProduct } from '../../types';
 
 export class CartModal extends Modal<IOrder> {
@@ -100,15 +101,29 @@ export class CartModal extends Modal<IOrder> {
 
 	private submitOrder(): void {
 		if (this.items.length === 0) {
-			return;
+			return; // Если корзина пуста, ничего не делаем
 		}
 
 		// Формируем массив товаров для передачи на оформление заказа
 		const orderItems = this.items.map((item) => ({
 			id: item.id,
-			quantity: item.quantity,
+			quantity: item.quantity, // Добавляем количество товара
 		}));
 
+		// Создаем объект заказа
+		const orderData: IOrder = {
+			items: orderItems, // Теперь items соответствует типу IOrder
+			address: '', // Это поле будет обновлено позже
+			email: '',
+			phone: '',
+			payment: '',
+			total: this.total,
+		};
+
+		// Создаем экземпляр OrderModel
+		const orderModel = new OrderModel(orderData, this.events);
+
+		// Открываем модальное окно для оформления заказа
 		const modalContainer = document.getElementById('modal-container');
 		if (modalContainer) {
 			modalContainer.innerHTML = '';
@@ -140,26 +155,29 @@ export class CartModal extends Modal<IOrder> {
 
 				// Проверяем, заполнены ли обязательные поля
 				if (addressInput.value.trim() === '' || !paymentInput) {
-					return;
+					return; // Если не заполнены, просто выходим
 				}
 
-				const orderDetails: IOrder = {
-					items: orderItems,
+				// Обновляем данные заказа через OrderModel
+				orderModel.updateOrderDetails({
 					address: addressInput.value,
 					email: emailInput.value,
 					phone: phoneInput.value,
 					payment: paymentInput || '',
-					total: this.total,
-				};
+					total: this.total, // Сумма может быть пересчитана здесь, если потребуется
+				});
 
-				if (typeof this.onCheckout === 'function') {
-					this.onCheckout([orderDetails]);
+				// Проверка валидности заказа
+				if (orderModel.validateOrder()) {
+					// Если заказ валиден, вызываем коллбек onCheckout
+					if (typeof this.onCheckout === 'function') {
+						this.onCheckout([orderModel.getOrderDetails()]); // Передаем детали заказа
+					}
+					modalContainer.innerHTML = ''; // Очищаем модальное окно
 				}
-
-				modalContainer.innerHTML = '';
 			});
 
-			modalContainer.appendChild(orderClone);
+			modalContainer.appendChild(orderClone); // Добавляем шаблон в контейнер
 		}
 	}
 
