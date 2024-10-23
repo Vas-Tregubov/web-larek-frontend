@@ -1,7 +1,6 @@
 import { Modal } from '../base/Modal';
 import { EventEmitter } from '../base/events';
 import { IOrder } from '../../types';
-import { CartModal } from './CartModal';
 import { OrderModel } from '../models/OrderModel';
 
 export class OrderDetailsModal extends Modal<IOrder> {
