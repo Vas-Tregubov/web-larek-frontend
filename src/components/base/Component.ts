@@ -1,17 +1,18 @@
 export abstract class Component<T> {
-	protected element: HTMLElement;
-	protected data: T;
+	constructor(protected readonly container: HTMLElement) {}
 
-	constructor(element: HTMLElement) {
-		this.element = element;
+	toggleElementState(element: HTMLElement, isActive: boolean): void {
+		if (!isActive) {
+			element.setAttribute('disabled', 'disabled');
+		} else {
+			element.removeAttribute('disabled');
+		}
+	}
+
+	render(data?: Partial<T>): HTMLElement {
+		Object.assign(this as object, data ?? {});
+		return this.container;
 	}
 
 	protected abstract createContent(): HTMLElement;
-
-	render(data: T): HTMLElement {
-		this.data = data;
-		this.element.innerHTML = ''; // Очистим элемент перед рендером
-		this.element.appendChild(this.createContent()); // Добавим новое содержимое
-		return this.element;
-	}
 }

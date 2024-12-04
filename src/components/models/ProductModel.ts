@@ -2,13 +2,13 @@ import { IProduct } from '../../types';
 import { EventEmitter } from '../base/events';
 
 export class ProductModel {
-	private id: string;
-	private description: string;
-	private image: string;
-	private title: string;
-	private category: string;
-	private price: number | null;
-	private events: EventEmitter;
+	public id: string;
+	public description: string;
+	public image: string;
+	public title: string;
+	public category: string;
+	public price: number | null;
+	public events: EventEmitter;
 
 	constructor(product: IProduct, events: EventEmitter) {
 		this.id = product.id;

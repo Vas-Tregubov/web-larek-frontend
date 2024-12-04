@@ -31,11 +31,11 @@ export interface IModal {
 }
 
 // Интерфейс для класса Card
-export interface ICard {
-	element: HTMLElement;
-	events: IEvents;
+// export interface ICard {
+// 	element: HTMLElement;
+// 	events: IEvents;
 
-	render(productData: IProduct): HTMLElement;
-	update(productData: IProduct): void;
-	openProductModal(): void;
-}
+// 	render(productData: IProduct): HTMLElement;
+// 	update(productData: IProduct): void;
+// 	openProductModal(): void;
+// }
