@@ -1,4 +1,4 @@
-import { EventEmitter, IEvents } from '../components/base/events';
+import { EventEmitter } from '../components/base/events';
 
 // Интерфейс карточки товара
 export interface IProduct {
