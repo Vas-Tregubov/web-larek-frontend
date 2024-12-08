@@ -8,34 +8,44 @@ export interface IProduct {
 	title: string;
 	category: string;
 	price: number | null;
+	selected: boolean | undefined;
+	index: number;
 }
 
 // Интерфейс заказа
 export interface IOrder {
 	payment: string;
+	address: string;
 	email: string;
 	phone: string;
-	address: string;
+	items: string[];
 	total: number;
-	items: { id: string; quantity: number }[];
 }
 
 // Интерфейс для базового класса Modal
-export interface IModal {
-	modal: HTMLElement;
-	events: EventEmitter;
+// export interface IModal {
+// 	modal: HTMLElement;
+// 	events: EventEmitter;
 
-	open(): void;
-	close(): void;
-	setEventListeners(): void;
+// 	open(): void;
+// 	close(): void;
+// 	setEventListeners(): void;
+// }
+
+// Интерфейс апи
+export interface IApi {
+	baseUrl: string;
+	get<T>(uri: string): Promise<T>;
+	post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
-// Интерфейс для класса Card
-// export interface ICard {
-// 	element: HTMLElement;
-// 	events: IEvents;
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
-// 	render(productData: IProduct): HTMLElement;
-// 	update(productData: IProduct): void;
-// 	openProductModal(): void;
-// }
+export type ApiCardResponse = {
+	items: IProduct[];
+};
+
+export type ApiOrderResponse = {
+	id: string;
+	total: number;
+};
