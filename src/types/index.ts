@@ -32,6 +32,12 @@ export interface IForm {
 	errors: string[];
 }
 
+export interface ICatalog {
+	counter: number;
+	catalog: HTMLElement[];
+	locked: boolean;
+}
+
 // Интерфейс апи
 export interface IApi {
 	baseUrl: string;
