@@ -40,6 +40,10 @@ export interface IBasket {
 	price: number;
 }
 
+export interface ISuccess {
+	total: number;
+}
+
 export interface IUserData {
 	payment: string;
 	address: string;
