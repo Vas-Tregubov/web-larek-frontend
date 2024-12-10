@@ -1,6 +1,5 @@
 import { EventEmitter } from '../components/base/events';
 
-// Интерфейс карточки товара
 export interface IProduct {
 	id: string;
 	description: string;
@@ -12,7 +11,6 @@ export interface IProduct {
 	index: number;
 }
 
-// Интерфейс заказа
 export interface IOrder {
 	payment: string;
 	address: string;
@@ -22,7 +20,6 @@ export interface IOrder {
 	total: number;
 }
 
-// Интерфейс для базового класса Modal
 export interface IModal {
 	content: HTMLElement;
 }
@@ -43,7 +40,13 @@ export interface IBasket {
 	price: number;
 }
 
-// Интерфейс апи
+export interface IUserData {
+	payment: string;
+	address: string;
+	email: string;
+	phone: string;
+}
+
 export interface IApi {
 	baseUrl: string;
 	get<T>(uri: string): Promise<T>;
