@@ -38,6 +38,11 @@ export interface ICatalog {
 	locked: boolean;
 }
 
+export interface IBasket {
+	items: HTMLElement[];
+	price: number;
+}
+
 // Интерфейс апи
 export interface IApi {
 	baseUrl: string;
