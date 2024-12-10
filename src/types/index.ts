@@ -23,14 +23,9 @@ export interface IOrder {
 }
 
 // Интерфейс для базового класса Modal
-// export interface IModal {
-// 	modal: HTMLElement;
-// 	events: EventEmitter;
-
-// 	open(): void;
-// 	close(): void;
-// 	setEventListeners(): void;
-// }
+export interface IModal {
+	content: HTMLElement;
+}
 
 // Интерфейс апи
 export interface IApi {
