@@ -27,6 +27,11 @@ export interface IModal {
 	content: HTMLElement;
 }
 
+export interface IForm {
+	valid: boolean;
+	errors: string[];
+}
+
 // Интерфейс апи
 export interface IApi {
 	baseUrl: string;
