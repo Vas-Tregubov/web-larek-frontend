@@ -6,16 +6,16 @@ export interface IProduct {
 	image: string;
 	title: string;
 	category: string;
-	price: number | null;
+	price: number;
 	selected: boolean | undefined;
 	index: number;
 }
 
 export const categoryMap = {
-	'другое': 'card__category_other',
+	другое: 'card__category_other',
 	'софт-скил': 'card__category_soft',
-	'дополнительное': 'card__category_additional',
-	'кнопка': 'card__category_button',
+	дополнительное: 'card__category_additional',
+	кнопка: 'card__category_button',
 	'хард-скил': 'card__category_hard',
 } as const;
 
@@ -59,6 +59,11 @@ export interface IUserData {
 	address: string;
 	email: string;
 	phone: string;
+}
+
+export interface IProductList {
+	products: IProduct[];
+	preview: string | null;
 }
 
 export interface IApi {
