@@ -9,7 +9,7 @@ export class CostumerData extends Model<IOrder> {
 
 	validationErrors: Partial<Record<keyof IOrder, string>> = {};
 
-	set setOrder({ field, value }: { field: keyof IOrder; value: string }) {
+	setOrder(field: keyof IOrder, value: string) {
 		(this as any)[field] = value;
 
 		if (this.validateContactDetails()) {
@@ -21,7 +21,12 @@ export class CostumerData extends Model<IOrder> {
 		}
 	}
 
-	getOrderDetails(): Partial<IOrder> {
+	getOrderDetails(): {
+		payment: string;
+		address: string;
+		email: string;
+		phone: string;
+	} {
 		return {
 			payment: this.payment,
 			address: this.address,

@@ -52,6 +52,7 @@ export interface IBasket {
 
 export interface ISuccess {
 	total: number;
+	onClick?: (event: MouseEvent) => void;
 }
 
 export interface IUserData {
@@ -82,3 +83,7 @@ export type ApiOrderResponse = {
 	id: string;
 	total: number;
 };
+
+export interface IActions {
+	onClick: (event: MouseEvent) => void;
+}

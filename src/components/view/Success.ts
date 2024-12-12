@@ -1,4 +1,4 @@
-import { ISuccess } from '../../types';
+import { ISuccess, IActions } from '../../types';
 import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
 
@@ -6,7 +6,7 @@ export class Success extends Component<ISuccess> {
 	protected button: HTMLButtonElement;
 	protected price: HTMLElement;
 
-	constructor(container: HTMLElement, onClick?: (event: MouseEvent) => void) {
+	constructor(container: HTMLElement, actions?: IActions) {
 		super(container);
 		this.button = ensureElement<HTMLButtonElement>(
 			'.order-success__close',
@@ -17,9 +17,9 @@ export class Success extends Component<ISuccess> {
 			container
 		);
 
-		if (onClick) {
+		if (actions?.onClick) {
 			if (this.button) {
-				this.button.addEventListener('click', onClick);
+				this.button.addEventListener('click', actions.onClick);
 			}
 		}
 	}

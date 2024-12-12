@@ -1,4 +1,4 @@
-import { IProduct } from '../../types';
+import { IProduct, IActions } from '../../types';
 import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
 
@@ -12,7 +12,7 @@ export class CardBasket extends Component<IProduct> {
 
 	constructor(
 		protected container: HTMLElement,
-		onClick?: (event: MouseEvent) => void
+		actions?: IActions
 	) {
 		super(container);
 
@@ -21,11 +21,11 @@ export class CardBasket extends Component<IProduct> {
 		this.index = ensureElement<HTMLElement>('.basket__item-index', container);
 		this.button = ensureElement<HTMLButtonElement>('.card__button', container);
 
-		if (onClick) {
+		if (actions.onClick) {
 			if (this.button) {
-				this.button.addEventListener('click', onClick);
+				this.button.addEventListener('click', actions.onClick);
 			} else {
-				container.addEventListener('click', onClick);
+				container.addEventListener('click', actions.onClick);
 			}
 		}
 	}
