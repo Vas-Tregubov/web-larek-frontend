@@ -20,12 +20,9 @@ import { CostumerData } from './components/model/CostumerData';
 import { ProductListData } from './components/model/ProductListData';
 
 import { Basket } from './components/view/Basket';
-import { CardBasket } from './components/view/CardBasket';
-import { CardList } from './components/view/CardList';
-import { CardPreview } from './components/view/CardPreview';
+import { CardBasket, CardList, CardPreview } from './components/view/Card';
 import { CatalogPage } from './components/view/CatalogPage';
 import { Contacts } from './components/view/Contacts';
-import { FormCommon } from './components/view/FormCommon';
 import { ModalCommon } from './components/view/ModalCommon';
 import { Order } from './components/view/Order';
 import { Success } from './components/view/Success';
@@ -33,12 +30,6 @@ import { Success } from './components/view/Success';
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 const events = new EventEmitter();
-
-//Containers
-
-const modalContainer: HTMLElement = document.querySelector('#modal-container');
-const page = new CatalogPage(document.body, events);
-const modal = new ModalCommon(modalContainer, events);
 
 //Templates
 
@@ -51,6 +42,12 @@ const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
+
+//Containers
+
+const modalContainer: HTMLElement = document.querySelector('#modal-container');
+const page = new CatalogPage(document.body, events);
+const modal = new ModalCommon(modalContainer, events);
 
 //Components
 
@@ -72,6 +69,7 @@ api
 	.getCards()
 	.then((result: ApiCardResponse) => {
 		productListData.productList = result.items;
+		console.log('productList после обновления:', productListData.productList);
 		events.emit('cards:loaded');
 	})
 	.catch((err) => {
@@ -81,14 +79,22 @@ api
 //Load cards
 
 events.on('cards:loaded', () => {
-	const productsArray = productListData.productList.map((card) => {
-		const cardInstant = new CardList(cloneTemplate(cardCatalogTemplate), {
-			onClick: () => events.emit('preview:change', card),
+	if (productListData.productList && productListData.productList.length > 0) {
+		const productsArray = productListData.productList.map((card) => {
+			const cardInstant = new CardList(cloneTemplate(cardCatalogTemplate), {
+				onClick: () => events.emit('preview:change', card),
+			});
+      console.log('Card перед вызовом render:', card);
+			console.log('CardInstant перед вызовом render:', cardInstant);
+			return cardInstant.render(card);
 		});
-		return cardInstant.render(card);
-	});
 
-	page.render({ catalog: productsArray });
+		console.log('Отрендерены карточки:', productsArray);
+
+		page.render({ catalog: productsArray });
+	} else {
+		console.log('Нет карточек для отображения');
+	}
 });
 
 //Open card
