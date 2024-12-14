@@ -41,8 +41,8 @@ export interface IForm {
 
 export interface ICatalog {
 	counter: number;
-	catalog: HTMLElement[];
 	locked: boolean;
+	setCatalogItems: HTMLElement[];
 }
 
 export interface IBasket {

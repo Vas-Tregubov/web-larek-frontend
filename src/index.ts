@@ -69,7 +69,6 @@ api
 	.getCards()
 	.then((result: ApiCardResponse) => {
 		productListData.productList = result.items;
-		console.log('productList после обновления:', productListData.productList);
 		events.emit('cards:loaded');
 	})
 	.catch((err) => {
@@ -84,14 +83,10 @@ events.on('cards:loaded', () => {
 			const cardInstant = new CardList(cloneTemplate(cardCatalogTemplate), {
 				onClick: () => events.emit('preview:change', card),
 			});
-      console.log('Card перед вызовом render:', card);
-			console.log('CardInstant перед вызовом render:', cardInstant);
 			return cardInstant.render(card);
 		});
 
-		console.log('Отрендерены карточки:', productsArray);
-
-		page.render({ catalog: productsArray });
+		page.render({ setCatalogItems: productsArray });
 	} else {
 		console.log('Нет карточек для отображения');
 	}
