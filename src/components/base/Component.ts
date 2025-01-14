@@ -1,15 +1,12 @@
 export abstract class Component<T> {
 	constructor(protected readonly container: HTMLElement) {}
 
-	toggleElementState(element: HTMLElement, isActive: boolean): void {
-		if (!isActive) {
-			element.setAttribute('disabled', 'disabled');
-		} else {
-			element.removeAttribute('disabled');
-		}
+	setDisabled(element: HTMLElement, state: boolean): void {
+		if (state) element.setAttribute('disabled', 'disabled');
+		else element.removeAttribute('disabled');
 	}
 
-	protected updateText(element: HTMLElement, value: string): void {
+	protected setText(element: HTMLElement, value: string): void {
 		element.textContent = String(value);
 	}
 

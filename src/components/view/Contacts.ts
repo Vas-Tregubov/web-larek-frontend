@@ -1,19 +1,19 @@
+import { TUserContacts } from '../../types';
 import { IEvents } from '../base/events';
-import { IUserData } from '../../types';
-import { FormCommon } from './FormCommon';
+import { Form } from '../common/Form';
 
-export class Contacts extends FormCommon<Partial<IUserData>> {
-	protected email: HTMLInputElement;
-	protected phone: HTMLInputElement;
+export class Contacts extends Form<TUserContacts> {
+	protected _email: HTMLInputElement;
+	protected _phone: HTMLInputElement;
 
 	constructor(protected container: HTMLFormElement, protected events: IEvents) {
 		super(container, events);
 
-		this.email = this.container.querySelector(
-			'[name="email"]'
+		this._email = this.container.elements.namedItem(
+			'email'
 		) as HTMLInputElement;
-		this.phone = this.container.querySelector(
-			'[name="phone"]'
+		this._phone = this.container.elements.namedItem(
+			'phone'
 		) as HTMLInputElement;
 	}
 }

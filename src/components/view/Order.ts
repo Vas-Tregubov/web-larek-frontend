@@ -1,37 +1,34 @@
+import { TUserOrder } from '../../types';
 import { IEvents } from '../base/events';
-import { IUserData } from '../../types';
-import { FormCommon } from './FormCommon';
+import { Form } from '../common/Form';
 
-export class Order extends FormCommon<Partial<IUserData>> {
-	protected cardButton: HTMLButtonElement;
-	protected cashButton: HTMLButtonElement;
-	protected address: HTMLInputElement;
+export class Order extends Form<TUserOrder> {
+	protected _card: HTMLButtonElement;
+	protected _cash: HTMLButtonElement;
+	protected _address: HTMLInputElement;
 
 	constructor(protected container: HTMLFormElement, protected events: IEvents) {
 		super(container, events);
 
-		this.cardButton = this.container.querySelector(
-			'[name="card"]'
-		) as HTMLButtonElement;
-		this.cashButton = this.container.querySelector(
-			'[name="cash"]'
-		) as HTMLButtonElement;
-		this.address = this.container.querySelector(
-			'[name="address"]'
+		this._card = this.container.elements.namedItem('card') as HTMLButtonElement;
+		this._cash = this.container.elements.namedItem('cash') as HTMLButtonElement;
+
+		this._address = this.container.elements.namedItem(
+			'address'
 		) as HTMLInputElement;
 
-		if (this.cashButton) {
-			this.cashButton.addEventListener('click', () => {
-				this.cashButton.classList.add('button_alt-active');
-				this.cardButton.classList.remove('button_alt-active');
-				this.onChangeInput('payment', 'cash');
+		if (this._cash) {
+			this._cash.addEventListener('click', () => {
+				this._cash.classList.add('button_alt-active');
+				this._card.classList.remove('button_alt-active');
+				this.onInputChange('payment', 'cash');
 			});
 		}
-		if (this.cardButton) {
-			this.cardButton.addEventListener('click', () => {
-				this.cardButton.classList.add('button_alt-active');
-				this.cashButton.classList.remove('button_alt-active');
-				this.onChangeInput('payment', 'card');
+		if (this._card) {
+			this._card.addEventListener('click', () => {
+				this._card.classList.add('button_alt-active');
+				this._cash.classList.remove('button_alt-active');
+				this.onInputChange('payment', 'card');
 			});
 		}
 	}

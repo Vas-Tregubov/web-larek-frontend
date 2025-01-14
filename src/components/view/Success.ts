@@ -1,30 +1,37 @@
-import { ISuccess, IActions } from '../../types';
-import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
+import { Component } from '../base/Component';
+
+interface ISuccessActions {
+	onClick: (event: MouseEvent) => void;
+}
+
+export interface ISuccess {
+	total: number;
+}
 
 export class Success extends Component<ISuccess> {
-	protected button: HTMLButtonElement;
-	protected price: HTMLElement;
+	protected _button: HTMLButtonElement;
+	protected _total: HTMLElement;
 
-	constructor(container: HTMLElement, actions?: IActions) {
+	constructor(container: HTMLElement, actions?: ISuccessActions) {
 		super(container);
-		this.button = ensureElement<HTMLButtonElement>(
+		this._button = ensureElement<HTMLButtonElement>(
 			'.order-success__close',
 			container
 		);
-		this.price = ensureElement<HTMLElement>(
+		this._total = ensureElement<HTMLElement>(
 			'.order-success__description',
 			container
 		);
 
 		if (actions?.onClick) {
-			if (this.button) {
-				this.button.addEventListener('click', actions.onClick);
+			if (this._button) {
+				this._button.addEventListener('click', actions.onClick);
 			}
 		}
 	}
 
 	set total(value: number) {
-		this.price.textContent = 'Списано ' + value + ' синапсов';
+		this._total.textContent = 'Списано ' + value + ' синапсов';
 	}
 }

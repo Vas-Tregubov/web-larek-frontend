@@ -1,18 +1,19 @@
-import { ApiCardResponse, ApiOrderResponse, IOrder, IApi } from '../../types/index';
+import { ApiCardResponse, ApiOrderResponse, IOrder } from '../types';
+import { IApi } from './base/api';
 
 export class AppApi {
-	private baseApi: IApi;
+	private _baseApi: IApi;
 
 	constructor(baseApi: IApi) {
-		this.baseApi = baseApi;
+		this._baseApi = baseApi;
 	}
 
 	getCards(): Promise<ApiCardResponse> {
-		return this.baseApi.get<ApiCardResponse>(`/product`);
+		return this._baseApi.get<ApiCardResponse>(`/product`);
 	}
 
 	postOrder(order: IOrder): Promise<ApiOrderResponse> {
-		return this.baseApi
+		return this._baseApi
 			.post<ApiOrderResponse>(`/order`, order)
 			.then((order: ApiOrderResponse) => order);
 	}

@@ -1,38 +1,27 @@
 import './scss/styles.scss';
 
-import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
-
-import { cloneTemplate, ensureElement } from './utils/utils';
+import { CardsData } from './components/CardsData';
+import { UserData } from './components/UserData';
+import { IApi } from './components/base/api';
 import { API_URL, settings } from './utils/constants';
-
-import {
-	ApiCardResponse,
-	ApiOrderResponse,
-	IOrder,
-	IProduct,
-	IApi,
-} from './types';
-
-import { AppApi } from './components/presenter/AppApi';
-
-import { CostumerData } from './components/model/CostumerData';
-import { ProductListData } from './components/model/ProductListData';
-
-import { Basket } from './components/view/Basket';
-import { CardBasket, CardList, CardPreview } from './components/view/Card';
-import { CatalogPage } from './components/view/CatalogPage';
-import { Contacts } from './components/view/Contacts';
-import { ModalCommon } from './components/view/ModalCommon';
-import { Order } from './components/view/Order';
-import { Success } from './components/view/Success';
+import { AppApi } from './components/AppApi';
+import { Api } from './components/base/api';
+import { ApiCardResponse, ApiOrderResponse, IOrder, IProduct } from './types';
+import { CardCatalog, CardPreview, CardBasket } from './components/View/Card';
+import { Page } from './components/View/Page';
+import { cloneTemplate, ensureElement } from './utils/utils';
+import { Basket } from './components/View/Basket';
+import { Modal } from './components/common/Modal';
+import { Order } from './components/View/Order';
+import { Contacts } from './components/View/Contacts';
+import { Success } from './components/View/Success';
 
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 const events = new EventEmitter();
 
-//Templates
-
+// Все шаблоны
 const cardCatalogTemplate: HTMLTemplateElement =
 	document.querySelector('#card-catalog');
 const cardPreviewTemplate: HTMLTemplateElement =
@@ -43,16 +32,16 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
-//Containers
-
+// Контейнер для поиска
 const modalContainer: HTMLElement = document.querySelector('#modal-container');
-const page = new CatalogPage(document.body, events);
-const modal = new ModalCommon(modalContainer, events);
 
-//Components
+// Глобальные контейнеры
+const page = new Page(document.body, events);
+const modal = new Modal(modalContainer, events);
 
-const costumerData = new CostumerData({}, events);
-const productListData = new ProductListData({}, events);
+// Переиспользуемые компоненты
+const cardsData = new CardsData({}, events);
+const userData = new UserData({}, events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
@@ -63,53 +52,44 @@ const success = new Success(cloneTemplate(successTemplate), {
 	},
 });
 
-//Get cards from server
-
+// Получаем карточки с сервера
 api
 	.getCards()
 	.then((result: ApiCardResponse) => {
-		productListData.productList = result.items;
+		cardsData.cards = result.items;
 		events.emit('cards:loaded');
 	})
 	.catch((err) => {
 		console.error(err);
 	});
 
-//Load cards
-
+// Загрузка карточек с сервера
 events.on('cards:loaded', () => {
-	if (productListData.productList && productListData.productList.length > 0) {
-		const productsArray = productListData.productList.map((card) => {
-			const cardInstant = new CardList(cloneTemplate(cardCatalogTemplate), {
-				onClick: () => events.emit('preview:change', card),
-			});
-			return cardInstant.render(card);
+	const cardsArray = cardsData.cards.map((card) => {
+		const cardInstant = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
+			onClick: () => events.emit('preview:change', card),
 		});
+		return cardInstant.render(card);
+	});
 
-		page.render({ setCatalogItems: productsArray });
-	} else {
-		console.log('Нет карточек для отображения');
-	}
+	page.render({ catalog: cardsArray });
 });
 
-//Open card
-
+// Открытие карточки
 events.on('preview:change', (data: { id: string }) => {
-	const selectedProduct = productListData.findProductById(data.id);
-	productListData.toggleProductSelection(selectedProduct);
+	const selectedProduct = cardsData.getCard(data.id);
+	cardsData.setPreview(selectedProduct);
 });
 
-//Add and delete product from basket
-
+// Добавление и удаление товара из корзины
 events.on('card:change', (data: { id: string }) => {
-	const changedProduct = productListData.findProductById(data.id);
-	productListData.toggleProductSelection(changedProduct);
+	const changedProduct = cardsData.getCard(data.id);
+	cardsData.toggleSelected(changedProduct);
 });
 
-//Render the product
-
+// Отображение открытой карточки
 events.on('preview:changed', (item: IProduct) => {
-	page.count = productListData.getSelectedProducts().length;
+	page.counter = cardsData.getAddedProducts().length;
 	const product = new CardPreview(cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
 			events.emit('card:change', item);
@@ -120,11 +100,10 @@ events.on('preview:changed', (item: IProduct) => {
 	});
 });
 
-//Update basket
-
+// Изменение корзины
 events.on('basket:changed', () => {
-	page.count = productListData.getSelectedProducts().length;
-	const cardBasketArray = productListData.productList
+	page.counter = cardsData.getAddedProducts().length;
+	const cardBasketArray = cardsData.cards
 		.filter((card) => card.selected)
 		.map((card, index) => {
 			const cardBasketInstant = new CardBasket(
@@ -142,19 +121,17 @@ events.on('basket:changed', () => {
 			});
 		});
 	basket.list = cardBasketArray;
-	basket.total = productListData.calculateTotalPrice();
+	basket.total = cardsData.getTotalPrice();
 });
 
-//Render the basket
-
+// Отображение корзины
 events.on('basket:open', () => {
 	modal.render({
 		content: basket.render(),
 	});
 });
 
-//Order form
-
+// Открытие формы заказа
 events.on('order:open', () => {
 	modal.render({
 		content: order.render({
@@ -165,8 +142,7 @@ events.on('order:open', () => {
 	});
 });
 
-//Contacts form
-
+// Открытие формы контактов
 events.on('order:submit', () => {
 	modal.render({
 		content: contacts.render({
@@ -178,14 +154,12 @@ events.on('order:submit', () => {
 	});
 });
 
-//Input change
-
+// Изменилось одно из полей ввода
 events.on('input:change', (data: { field: keyof IOrder; value: string }) => {
-	costumerData.setOrder(data.field, data.value);
+	userData.setUserOrder(data.field, data.value);
 });
 
-//Validation change
-
+// Изменилось состояние валидации заказа
 events.on('orderFormErrors:change', (errors: Partial<IOrder>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
@@ -194,13 +168,21 @@ events.on('orderFormErrors:change', (errors: Partial<IOrder>) => {
 		.join('; ');
 });
 
-//Make order
+// Изменилось состояние валидации контактов
+events.on('contactsFormErrors:change', (errors: Partial<IOrder>) => {
+	const { email, phone } = errors;
+	contacts.valid = !email && !phone;
+	contacts.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
+});
 
+// Отправка заказа
 events.on('contacts:submit', () => {
 	const order = {
-		...costumerData.getOrderDetails(),
-		items: productListData.getSelectedProducts().map((card) => card.id),
-		total: productListData.calculateTotalPrice(),
+		...userData.getUserData(),
+		items: cardsData.getAddedProducts().map((card) => card.id),
+		total: cardsData.getTotalPrice(),
 	};
 	api
 		.postOrder(order)
@@ -212,23 +194,22 @@ events.on('contacts:submit', () => {
 		});
 });
 
-//Success
-
+// Обработка успеха
 events.on('order:success', (response: ApiOrderResponse) => {
 	modal.render({
 		content: success.render({
 			total: response.total,
 		}),
 	});
-	productListData.clearSelectedProducts();
+	cardsData.resetSelected();
 });
 
-//Modals
-
+// Блокируем прокрутку страницы если открыта модалка
 events.on('modal:open', () => {
-	page.isContentLocked = true;
+	page.locked = true;
 });
 
+// ... и разблокируем
 events.on('modal:close', () => {
-	page.isContentLocked = false;
+	page.locked = false;
 });

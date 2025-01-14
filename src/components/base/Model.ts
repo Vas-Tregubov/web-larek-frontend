@@ -5,7 +5,7 @@ export abstract class Model<T> {
 		Object.assign(this, data);
 	}
 
-	triggerEvent(eventName: string, data?: object) {
-		this.events.emit(eventName, data ?? {});
+	emitChanges(event: string, payload?: object) {
+		this.events.emit(event, payload ?? {});
 	}
 }
