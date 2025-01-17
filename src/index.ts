@@ -84,12 +84,12 @@ events.on('preview:change', (data: { id: string }) => {
 // Adding and removing items from the cart
 events.on('card:change', (data: { id: string }) => {
 	const changedProduct = cardsData.getCard(data.id);
-	cardsData.toggleSelected(changedProduct);
+	cardsData.toggleCardSelection(changedProduct);
 });
 
 // Displaying the opened card
 events.on('preview:changed', (item: IProduct) => {
-	page.counter = cardsData.getAddedProducts().length;
+	page.counter = cardsData.getSelectedProducts().length;
 	const product = new CardPreview(cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
 			events.emit('card:change', item);
@@ -102,7 +102,7 @@ events.on('preview:changed', (item: IProduct) => {
 
 // Updating the cart
 events.on('basket:changed', () => {
-	page.counter = cardsData.getAddedProducts().length;
+	page.counter = cardsData.getSelectedProducts().length;
 	const cardBasketArray = cardsData.cards
 		.filter((card) => card.selected)
 		.map((card, index) => {
@@ -181,7 +181,7 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrder>) => {
 events.on('contacts:submit', () => {
 	const order = {
 		...userData.getUserData(),
-		items: cardsData.getAddedProducts().map((card) => card.id),
+		items: cardsData.getSelectedProducts().map((card) => card.id),
 		total: cardsData.getTotalPrice(),
 	};
 	api

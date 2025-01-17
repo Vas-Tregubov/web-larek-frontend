@@ -2,25 +2,25 @@ import { Model } from './base/Model';
 import { ICardsData, IProduct } from '../types';
 
 export class CardsData extends Model<ICardsData> {
-	protected _cards: IProduct[];
-	protected _preview: string | null;
+	protected cardsData: IProduct[];
+	protected previewData: string | null;
 
 	set cards(cards: IProduct[]) {
-		this._cards = cards;
-		this._cards.forEach((card) => (card.selected = false));
+		this.cardsData = cards;
+		this.cardsData.forEach((card) => (card.selected = false));
 	}
 
 	get cards() {
-		return this._cards;
+		return this.cardsData;
 	}
 
 	setPreview(card: IProduct): void {
-		this._preview = card.id;
+		this.previewData = card.id;
 		this.events.emit('preview:changed', card);
 	}
 
 	getCard(cardId: string): IProduct | undefined {
-		const card = this._cards.find((card) => card.id === cardId);
+		const card = this.cardsData.find((card) => card.id === cardId);
 		if (card) {
 			return card;
 		} else {
@@ -28,7 +28,7 @@ export class CardsData extends Model<ICardsData> {
 		}
 	}
 
-	toggleSelected(card: IProduct): void {
+	toggleCardSelection(card: IProduct): void {
 		if (!card.selected) {
 			card.selected = true;
 			this.events.emit('preview:changed', card);
@@ -38,19 +38,19 @@ export class CardsData extends Model<ICardsData> {
 		this.events.emit('basket:changed');
 	}
 
-	getAddedProducts(): IProduct[] {
-		return this._cards.filter((card) => card.selected);
+	getSelectedProducts(): IProduct[] {
+		return this.cardsData.filter((card) => card.selected);
 	}
 
 	getTotalPrice(): number {
-		return this.getAddedProducts().reduce(
+		return this.getSelectedProducts().reduce(
 			(total, card) => total + card.price,
 			0
 		);
 	}
 
 	resetSelected(): void {
-		this._cards.forEach((card) => (card.selected = false));
+		this.cardsData.forEach((card) => (card.selected = false));
 		this.events.emit('basket:changed');
 	}
 }
