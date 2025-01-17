@@ -7,29 +7,29 @@ interface IModalData {
 }
 
 export class Modal extends Component<IModalData> {
-	protected _content: HTMLElement;
-	protected _closeButton: HTMLButtonElement;
+	protected contentElement: HTMLElement;
+	protected closeButton: HTMLButtonElement;
 	protected events: IEvents;
 
 	constructor(container: HTMLElement, events: IEvents) {
 		super(container);
 		this.events = events;
 
-		this._content = ensureElement<HTMLElement>('.modal__content', container);
-		this._closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
+		this.contentElement = ensureElement<HTMLElement>('.modal__content', container);
+		this.closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
 
-		this._closeButton.addEventListener('click', this.close.bind(this));
+		this.closeButton.addEventListener('click', this.close.bind(this));
 		this.container.addEventListener('mousedown', (evt) => {
 			if (evt.target === evt.currentTarget) {
 				this.close();
 			}
 		});
-		this._content.addEventListener('click', (event) => event.stopPropagation());
+		this.contentElement.addEventListener('click', (event) => event.stopPropagation());
 		this.handleEscUp = this.handleEscUp.bind(this);
 	}
 
 	set content(value: HTMLElement) {
-		this._content.replaceChildren(value);
+		this.contentElement.replaceChildren(value);
 	}
 
 	open() {

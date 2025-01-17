@@ -85,6 +85,7 @@ events.on('preview:change', (data: { id: string }) => {
 events.on('card:change', (data: { id: string }) => {
 	const changedProduct = cardsData.getCard(data.id);
 	cardsData.toggleCardSelection(changedProduct);
+	modal.close();
 });
 
 // Displaying the opened card
