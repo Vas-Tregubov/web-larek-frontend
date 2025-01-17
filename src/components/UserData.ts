@@ -21,7 +21,7 @@ export class UserData extends Model<IOrder> {
 			this.events.emit('order:ready', this);
 		}
 	}
-	
+
 	getUserData(): {
 		payment: string;
 		address: string;
@@ -51,14 +51,37 @@ export class UserData extends Model<IOrder> {
 
 	validateContacts() {
 		const errors: typeof this.formErrors = {};
+
+		// Валидация email
 		if (!this.email) {
-			errors.email = 'Необходимо указать email';
+			errors.email = 'Необходимо указать email ';
+		} else if (!this.isValidEmail(this.email)) {
+			errors.email = 'Некорректный email ';
 		}
+
+		// Валидация телефона
 		if (!this.phone) {
-			errors.phone = 'Необходимо указать телефон';
+			errors.phone = 'Необходимо указать телефон ';
+		} else if (!this.isValidPhone(this.phone)) {
+			errors.phone = 'Некорректный номер телефона ';
 		}
+
 		this.formErrors = errors;
 		this.events.emit('contactsFormErrors:change', this.formErrors);
+
 		return Object.keys(errors).length === 0;
+	}
+
+	// Функция для проверки email
+	private isValidEmail(email: string): boolean {
+		const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+		return emailPattern.test(email);
+	}
+
+	// Функция для проверки телефона
+	private isValidPhone(phone: string): boolean {
+		const phonePattern =
+			/^(?:\+7|8)\s?\(?\d{3}\)?\s?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/;
+		return phonePattern.test(phone);
 	}
 }

@@ -98,6 +98,8 @@
 - `getUserData()` — Возвращает объект с данными заказа (адрес, способ оплаты, email и телефон) в виде `Partial<IOrder>`.
 - `validateOrder()` — Валидирует поля `address` и `payment`. Генерирует событие `orderFormErrors:change` с ошибками валидации.
 - `validateContacts()` — Валидирует поля `email` и `phone`. Генерирует событие `contactsFormErrors:change` с ошибками валидации.
+- `isValidEmail(email: string): boolean` — Проверяет, соответствует ли указанный `email` правильному формату. Возвращает `true`, если `email` валиден, и `false` в противном случае.
+- `isValidPhone(phone: string): boolean` — Проверяет, соответствует ли указанный телефон правильному формату российского номера. Возвращает `true`, если номер валиден, и `false` в противном случае.
 
 #### Класс CardsData
 
