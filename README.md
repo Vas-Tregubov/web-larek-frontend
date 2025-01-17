@@ -312,7 +312,7 @@
 
 - `setDescription(description: string)` — Устанавливает описание товара.
 
-### Слой Presenter
+### Слой API
 
 #### Класс AppApi
 
@@ -324,6 +324,8 @@
 
 - `getCards()` — Получает список карточек продуктов с API. Возвращает `Promise<ApiCardResponse>`.
 - `postOrder(order: IOrder)` — Отправляет заказ на API. Возвращает `Promise<ApiOrderResponse>`, разрешается с ответом от API.
+
+### События EventEmitter
 
 События изменения данных (генерируются классами моделей данных):
 
