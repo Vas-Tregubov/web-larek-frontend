@@ -175,7 +175,7 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrder>) => {
 	contacts.valid = !email && !phone;
 	contacts.errors = Object.values({ phone, email })
 		.filter((i) => !!i)
-		.join('; ');
+		.join(', ');
 });
 
 // Sending the order

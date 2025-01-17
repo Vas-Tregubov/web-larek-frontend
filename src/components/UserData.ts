@@ -54,16 +54,16 @@ export class UserData extends Model<IOrder> {
 
 		// Валидация email
 		if (!this.email) {
-			errors.email = 'Необходимо указать email ';
+			errors.email = 'Необходимо указать email';
 		} else if (!this.isValidEmail(this.email)) {
-			errors.email = 'Некорректный email ';
+			errors.email = 'Некорректный email';
 		}
 
 		// Валидация телефона
 		if (!this.phone) {
-			errors.phone = 'Необходимо указать телефон ';
+			errors.phone = 'Необходимо указать телефон';
 		} else if (!this.isValidPhone(this.phone)) {
-			errors.phone = 'Некорректный номер телефона ';
+			errors.phone = 'Некорректный номер телефона';
 		}
 
 		this.formErrors = errors;
