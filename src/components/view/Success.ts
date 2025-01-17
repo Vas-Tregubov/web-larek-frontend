@@ -10,28 +10,28 @@ export interface ISuccess {
 }
 
 export class Success extends Component<ISuccess> {
-	protected _button: HTMLButtonElement;
-	protected _total: HTMLElement;
+	protected button: HTMLButtonElement;
+	protected totalElement: HTMLElement;
 
 	constructor(container: HTMLElement, actions?: ISuccessActions) {
 		super(container);
-		this._button = ensureElement<HTMLButtonElement>(
+		this.button = ensureElement<HTMLButtonElement>(
 			'.order-success__close',
 			container
 		);
-		this._total = ensureElement<HTMLElement>(
+		this.totalElement = ensureElement<HTMLElement>(
 			'.order-success__description',
 			container
 		);
 
 		if (actions?.onClick) {
-			if (this._button) {
-				this._button.addEventListener('click', actions.onClick);
+			if (this.button) {
+				this.button.addEventListener('click', actions.onClick);
 			}
 		}
 	}
 
 	set total(value: number) {
-		this._total.textContent = 'Списано ' + value + ' синапсов';
+		this.totalElement.textContent = 'Списано ' + value + ' синапсов';
 	}
 }
