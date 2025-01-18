@@ -40,6 +40,8 @@ export class UserData extends Model<IOrder> {
 		const errors: typeof this.formErrors = {};
 		if (!this.address) {
 			errors.address = 'Необходимо указать адрес';
+		} else if (!this.isValidAddress(this.address)) {
+			errors.address = 'Некорректный адрес';
 		}
 		if (!this.payment) {
 			errors.payment = 'Необходимо указать способ оплаты';
@@ -83,5 +85,11 @@ export class UserData extends Model<IOrder> {
 		const phonePattern =
 			/^(?:\+7|8)\s?\(?\d{3}\)?\s?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/;
 		return phonePattern.test(phone);
+	}
+
+	private isValidAddress(address: string): boolean {
+		const addressPattern =
+			/^(?=.*\b[А-Яа-яЁёA-Za-z\s]+(?:\s[0-9]+)?)\b([А-Яа-яЁёA-Za-z\s]+,\s?[А-Яа-яЁёA-Za-z\s]+(?:\s[0-9]+)?)+$/;
+		return addressPattern.test(address);
 	}
 }
