@@ -103,6 +103,7 @@ export class CardPreview extends CardList {
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container, actions);
 		this.cardText = this.container.querySelector('.card__text');
+		console.log('CardPreview initialized successfully');
 	}
 
 	set description(description: string) {
