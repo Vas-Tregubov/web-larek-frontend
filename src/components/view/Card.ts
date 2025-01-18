@@ -68,7 +68,7 @@ export class CardBasket extends Component<IProduct> {
 	}
 }
 
-export class CardCatalog extends CardBasket {
+export class CardList extends CardBasket {
 	protected cardCategory: HTMLElement;
 	protected cardImage: HTMLImageElement;
 
@@ -77,6 +77,8 @@ export class CardCatalog extends CardBasket {
 
 		this.cardCategory = this.container.querySelector('.card__category');
 		this.cardImage = this.container.querySelector('.card__image');
+
+		console.log('CardCatalog initialized successfully');
 	}
 
 	set category(category: CategoryType) {
@@ -95,7 +97,7 @@ export class CardCatalog extends CardBasket {
 	}
 }
 
-export class CardPreview extends CardCatalog {
+export class CardPreview extends CardList {
 	protected cardText: HTMLElement;
 
 	constructor(container: HTMLElement, actions?: ICardActions) {

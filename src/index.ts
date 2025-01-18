@@ -8,7 +8,7 @@ import { API_URL, settings } from './utils/constants';
 import { AppApi } from './components/AppApi';
 import { Api } from './components/base/api';
 import { ApiCardResponse, ApiOrderResponse, IOrder, IProduct } from './types';
-import { CardCatalog, CardPreview, CardBasket } from './components/View/Card';
+import { CardList, CardPreview, CardBasket } from './components/View/Card';
 import { Page } from './components/View/Page';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { Basket } from './components/View/Basket';
@@ -66,7 +66,7 @@ api
 // Loading cards from the server
 events.on('cards:loaded', () => {
 	const cardsArray = cardsData.cards.map((card) => {
-		const cardInstant = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
+		const cardInstant = new CardList(cloneTemplate(cardCatalogTemplate), {
 			onClick: () => events.emit('preview:change', card),
 		});
 		return cardInstant.render(card);
