@@ -88,8 +88,7 @@ export class UserData extends Model<IOrder> {
 	}
 
 	private isValidAddress(address: string): boolean {
-		const addressPattern =
-			/^(?=.*\b[А-Яа-яЁёA-Za-z\s]+(?:\s[0-9]+)?)\b([А-Яа-яЁёA-Za-z\s]+,\s?[А-Яа-яЁёA-Za-z\s]+(?:\s[0-9]+)?)+$/;
+		const addressPattern = /^(?=.*[a-zA-ZА-Яа-яЁё]{3,})(?=.*\d).+$/;
 		return addressPattern.test(address);
 	}
 }

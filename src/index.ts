@@ -21,7 +21,7 @@ const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 const events = new EventEmitter();
 
-// Templates
+// Шаблоны
 const cardCatalogTemplate: HTMLTemplateElement =
 	document.querySelector('#card-catalog');
 const cardPreviewTemplate: HTMLTemplateElement =
@@ -32,14 +32,14 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
-// Container
+// Основной контейнер модалки
 const modalContainer: HTMLElement = document.querySelector('#modal-container');
 
-// Global containers
+// Глобальные контейнеры
 const page = new Page(document.body, events);
 const modal = new Modal(modalContainer, events);
 
-// Reusable components
+// Компоненты
 const cardsData = new CardsData({}, events);
 const userData = new UserData({}, events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
@@ -52,7 +52,7 @@ const success = new Success(cloneTemplate(successTemplate), {
 	},
 });
 
-// Fetching cards from the server
+// Загружаем карточки с сервера
 api
 	.getCards()
 	.then((result: ApiCardResponse) => {
@@ -63,7 +63,7 @@ api
 		console.error(err);
 	});
 
-// Loading cards from the server
+// Отображаем карточки
 events.on('cards:loaded', () => {
 	const cardsArray = cardsData.cards.map((card) => {
 		const cardInstant = new CardList(cloneTemplate(cardCatalogTemplate), {
@@ -75,20 +75,20 @@ events.on('cards:loaded', () => {
 	page.render({ catalog: cardsArray });
 });
 
-// Opening a card
+// Открываем карточку
 events.on('preview:change', (data: { id: string }) => {
 	const selectedProduct = cardsData.getCard(data.id);
 	cardsData.setPreview(selectedProduct);
 });
 
-// Adding and removing items from the cart
+// Добавляем и удаляем карточку из корзины
 events.on('card:change', (data: { id: string }) => {
 	const changedProduct = cardsData.getCard(data.id);
 	cardsData.toggleCardSelection(changedProduct);
 	modal.close();
 });
 
-// Displaying the opened card
+// Отображаем открытую карточку
 events.on('preview:changed', (item: IProduct) => {
 	page.counter = cardsData.getSelectedProducts().length;
 	const product = new CardPreview(cloneTemplate(cardPreviewTemplate), {
@@ -101,7 +101,7 @@ events.on('preview:changed', (item: IProduct) => {
 	});
 });
 
-// Updating the cart
+// Обновляем карточку
 events.on('basket:changed', () => {
 	page.counter = cardsData.getSelectedProducts().length;
 	const cardBasketArray = cardsData.cards
@@ -125,14 +125,14 @@ events.on('basket:changed', () => {
 	basket.total = cardsData.getTotalPrice();
 });
 
-// Displaying the cart
+// Рендерим карточку
 events.on('basket:open', () => {
 	modal.render({
 		content: basket.render(),
 	});
 });
 
-// Opening the order form
+// Открываем форму заказа
 events.on('order:open', () => {
 	modal.render({
 		content: order.render({
@@ -143,7 +143,7 @@ events.on('order:open', () => {
 	});
 });
 
-// Opening the contacts form
+// Открываем форму контактов
 events.on('order:submit', () => {
 	modal.render({
 		content: contacts.render({
@@ -155,12 +155,12 @@ events.on('order:submit', () => {
 	});
 });
 
-// One of the input fields has changed
+// Одно из полей ввода изменилось
 events.on('input:change', (data: { field: keyof IOrder; value: string }) => {
 	userData.setUserOrder(data.field, data.value);
 });
 
-// The order validation state has changed
+// Статус валидации полей заказа изменился
 events.on('orderFormErrors:change', (errors: Partial<IOrder>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
@@ -169,7 +169,7 @@ events.on('orderFormErrors:change', (errors: Partial<IOrder>) => {
 		.join('; ');
 });
 
-// The contacts validation state has changed
+// Статус валидации полей контактов изменился
 events.on('contactsFormErrors:change', (errors: Partial<IOrder>) => {
 	const { email, phone } = errors;
 	contacts.valid = !email && !phone;
@@ -178,7 +178,7 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrder>) => {
 		.join(', ');
 });
 
-// Sending the order
+// Отправляем заказ на сервер
 events.on('contacts:submit', () => {
 	const order = {
 		...userData.getUserData(),
@@ -195,22 +195,25 @@ events.on('contacts:submit', () => {
 		});
 });
 
-// Handling success
+// Обрабатываем успешное оформление
 events.on('order:success', (response: ApiOrderResponse) => {
 	modal.render({
 		content: success.render({
 			total: response.total,
 		}),
 	});
+	setTimeout(() => {
+		modal.close();
+	}, 5000);
 	cardsData.resetSelected();
 });
 
-// Locking page scrolling when a modal is open
+// Блокируем прокрутку страницы, когда открыто модальное окно
 events.on('modal:open', () => {
 	page.locked = true;
 });
 
-// Unlocking page scrolling when a modal is closed
+// Разблокируем прокрутку страницы, когда модальное окно закрыто
 events.on('modal:close', () => {
 	page.locked = false;
 });
