@@ -85,7 +85,10 @@ events.on('preview:change', (data: { id: string }) => {
 events.on('card:change', (data: { id: string }) => {
 	const changedProduct = cardsData.getCard(data.id);
 	cardsData.toggleCardSelection(changedProduct);
-	modal.close();
+
+	if (changedProduct.selected) {
+		modal.close();
+	}
 });
 
 // Отображаем открытую карточку
@@ -101,7 +104,7 @@ events.on('preview:changed', (item: IProduct) => {
 	});
 });
 
-// Обновляем карточку
+// Обновляем карточку корзины
 events.on('basket:changed', () => {
 	page.counter = cardsData.getSelectedProducts().length;
 	const cardBasketArray = cardsData.cards
@@ -123,6 +126,11 @@ events.on('basket:changed', () => {
 		});
 	basket.list = cardBasketArray;
 	basket.total = cardsData.getTotalPrice();
+
+	if (cardsData.getSelectedProducts().length === 0) {
+		modal.close();
+		return;
+	}
 });
 
 // Рендерим карточку
