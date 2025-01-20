@@ -2,6 +2,7 @@ import './scss/styles.scss';
 
 import { EventEmitter } from './components/base/events';
 import { CardsData } from './components/CardsData';
+import { BasketData } from './components/BasketData';
 import { UserData } from './components/UserData';
 import { IApi } from './components/base/api';
 import { API_URL, settings } from './utils/constants';
@@ -41,6 +42,7 @@ const modal = new Modal(modalContainer, events);
 
 // Компоненты
 const cardsData = new CardsData({}, events);
+const basketData = new BasketData({}, events);
 const userData = new UserData({}, events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
@@ -85,6 +87,8 @@ events.on('preview:change', (data: { id: string }) => {
 events.on('card:change', (data: { id: string }) => {
 	const changedProduct = cardsData.getCard(data.id);
 	cardsData.toggleCardSelection(changedProduct);
+	basketData.selectedProducts = cardsData.cards.filter((card) => card.selected);
+	events.emit('basket:changed');
 
 	if (changedProduct.selected) {
 		modal.close();
@@ -93,7 +97,7 @@ events.on('card:change', (data: { id: string }) => {
 
 // Отображаем открытую карточку
 events.on('preview:changed', (item: IProduct) => {
-	page.counter = cardsData.getSelectedProducts().length;
+	page.counter = basketData.getSelectedProducts().length;
 	const product = new CardPreview(cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
 			events.emit('card:change', item);
@@ -106,7 +110,7 @@ events.on('preview:changed', (item: IProduct) => {
 
 // Обновляем карточку корзины
 events.on('basket:changed', () => {
-	page.counter = cardsData.getSelectedProducts().length;
+	page.counter = basketData.getSelectedProducts().length;
 	const cardBasketArray = cardsData.cards
 		.filter((card) => card.selected)
 		.map((card, index) => {
@@ -125,9 +129,9 @@ events.on('basket:changed', () => {
 			});
 		});
 	basket.list = cardBasketArray;
-	basket.total = cardsData.getTotalPrice();
+	basket.total = basketData.getTotalPrice();
 
-	if (cardsData.getSelectedProducts().length === 0) {
+	if (basketData.getSelectedProducts().length === 0) {
 		modal.close();
 		return;
 	}
@@ -190,8 +194,8 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrder>) => {
 events.on('contacts:submit', () => {
 	const order = {
 		...userData.getUserData(),
-		items: cardsData.getSelectedProducts().map((card) => card.id),
-		total: cardsData.getTotalPrice(),
+		items: basketData.getSelectedProducts().map((card) => card.id),
+		total: basketData.getTotalPrice(),
 	};
 	api
 		.postOrder(order)
@@ -213,7 +217,7 @@ events.on('order:success', (response: ApiOrderResponse) => {
 	setTimeout(() => {
 		modal.close();
 	}, 5000);
-	cardsData.resetSelected();
+	basketData.resetSelected();
 });
 
 // Блокируем прокрутку страницы, когда открыто модальное окно

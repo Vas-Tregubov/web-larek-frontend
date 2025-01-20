@@ -37,20 +37,4 @@ export class CardsData extends Model<ICardsData> {
 		}
 		this.events.emit('basket:changed');
 	}
-
-	getSelectedProducts(): IProduct[] {
-		return this.cardsData.filter((card) => card.selected);
-	}
-
-	getTotalPrice(): number {
-		return this.getSelectedProducts().reduce(
-			(total, card) => total + card.price,
-			0
-		);
-	}
-
-	resetSelected(): void {
-		this.cardsData.forEach((card) => (card.selected = false));
-		this.events.emit('basket:changed');
-	}
 }
